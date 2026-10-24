@@ -10,6 +10,9 @@ permissions:
   packages: write
   id-token: write
 
+env:
+  MODULE_URL: oci://ghcr.io/${{ github.repository_owner }}/modules/tsbridge
+
 jobs:
   push:
     runs-on: ubuntu-latest
@@ -25,23 +28,32 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: echo "${GH_TOKEN}" | timoni registry login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
 
-      - name: Push and sign module
+      - name: Push module (release)
+        if: ${{ !contains(github.ref_name, '-') }}
         run: |
-          latest=""
-          [[ "${GITHUB_REF_NAME}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] && latest="--latest"
-          timoni mod push ./modules/tsbridge \
-            "oci://ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/modules/tsbridge" \
-            --version "${GITHUB_REF_NAME}" \
-            ${latest} \
+          timoni mod push ./modules/tsbridge "${MODULE_URL,,}" \
+            --version "${GITHUB_REF_NAME}" --latest \
             -a 'org.opencontainers.image.licenses=MPL-2.0' \
             -a "org.opencontainers.image.source=https://github.com/${GITHUB_REPOSITORY}" \
-            -a 'org.opencontainers.image.description=tsbridge timoni module.' \
             --sign=cosign
 
-      - name: Create GitHub Release
+      - name: Push module (prerelease)
+        if: ${{ contains(github.ref_name, '-') }}
+        run: |
+          timoni mod push ./modules/tsbridge "${MODULE_URL,,}" \
+            --version "${GITHUB_REF_NAME}" \
+            -a 'org.opencontainers.image.licenses=MPL-2.0' \
+            -a "org.opencontainers.image.source=https://github.com/${GITHUB_REPOSITORY}" \
+            --sign=cosign
+
+      - name: Create GitHub release
+        if: ${{ !contains(github.ref_name, '-') }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          pre=""
-          [[ "${GITHUB_REF_NAME}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || pre="--prerelease"
-          gh release create "${GITHUB_REF_NAME}" --title "${GITHUB_REF_NAME}" --generate-notes ${pre}
+        run: gh release create "${GITHUB_REF_NAME}" --generate-notes
+
+      - name: Create GitHub prerelease
+        if: ${{ contains(github.ref_name, '-') }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create "${GITHUB_REF_NAME}" --generate-notes --prerelease

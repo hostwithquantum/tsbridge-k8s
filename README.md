@@ -58,7 +58,7 @@ make setup       # kind cluster
 make run-dev     # apply setup/bundle.cue, creds from TS_OAUTH_CLIENT_ID/SECRET env
 ```
 
-Release: push a semver tag (e.g. `0.1.0`).
+Release: push a tag like `0.1.0`.
 
 ## License
 
