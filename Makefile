@@ -25,6 +25,8 @@ TEST_ENV := TS_OAUTH_CLIENT_ID=test TS_OAUTH_CLIENT_SECRET=test
 build: ## render manifests to dist/
 	mkdir -p $(DIST_DIR)
 	$(TEST_ENV) TIMONI_KUBE_VERSION=$(KUBE_VERSION) timoni bundle build -f $(BUNDLE_FILE) --runtime-from-env > $(MANIFESTS)
+	rm -f $(DIST_DIR)/tsbridge.oci.tar
+	timoni mod build $(MODULE_DIR) -v 0.0.0-dev -o $(DIST_DIR)/tsbridge.oci.tar
 
 test: build ## mod vet + bundle vet + kubeconform
 	TIMONI_KUBE_VERSION=$(KUBE_VERSION) timoni mod vet $(MODULE_DIR) --debug
