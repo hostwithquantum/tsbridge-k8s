@@ -41,7 +41,7 @@ jobs:
         if: ${{ contains(github.ref_name, '-') }}
         run: |
           timoni mod push ./modules/tsbridge "${MODULE_URL,,}" \
-            --version "${GITHUB_REF_NAME}" \
+            --version "${GITHUB_REF_NAME}" --latest=false \
             -a 'org.opencontainers.image.licenses=MPL-2.0' \
             -a "org.opencontainers.image.source=https://github.com/${GITHUB_REPOSITORY}" \
             --sign=cosign
