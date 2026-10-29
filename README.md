@@ -48,7 +48,8 @@ values from a Kubernetes Secret, see
 
 `config` is rendered as-is to TOML, so any option from the
 [configuration reference](https://github.com/jtdowney/tsbridge/blob/main/docs/configuration-reference.md)
-works. Optional: `storage` (default `1Gi`), `resources`, `image`.
+works. Optional: `storage` (default `1Gi`), `storageClassName` (cluster
+default if unset), `resources`, `image`.
 
 ## Development
 

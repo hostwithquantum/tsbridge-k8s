@@ -12,5 +12,8 @@ import (
 	spec: {
 		accessModes: ["ReadWriteOnce"]
 		resources: requests: storage: #config.storage
+		if #config.storageClassName != _|_ {
+			storageClassName: #config.storageClassName
+		}
 	}
 }
