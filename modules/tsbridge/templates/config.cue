@@ -45,6 +45,9 @@ import (
 	// Size of the volume for the tailscale state.
 	storage: *"1Gi" | string
 
+	// Storage class for the state volume, cluster default if unset.
+	storageClassName?: string
+
 	resources: timoniv1.#ResourceRequirements & {
 		requests: {
 			cpu:    *"10m" | timoniv1.#CPUQuantity
