@@ -5,7 +5,7 @@
 package main
 
 import (
-	templates "timoni.sh/tsbridge/templates"
+	templates "github.com/hostwithquantum/tsbridge-k8s/templates"
 )
 
 // Define the schema for the user-supplied values.
